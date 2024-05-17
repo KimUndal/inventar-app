@@ -1,11 +1,10 @@
 package com.undal.inventarapp.database;
 
+import com.undal.inventarapp.shared.util.Util;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +13,9 @@ import java.util.Scanner;
 public class CreateTable{
 
 
-    public static final String JDBC_URL = "jdbc:sqlite:inventar.sqlite";
+    public static final String JDBC_URL = Util.JDBC_URL;
 
-    public void createTables(){
+    public void createTables(boolean addMockdata){
         try(Connection conn = DriverManager.getConnection(JDBC_URL)) {
             String sql = "";
             for (String fileName : getTableName()) {
@@ -26,7 +25,7 @@ public class CreateTable{
                                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                                 "category TEXT NOT NULL, " +
                                 "description TEXT, " +
-                                "dateofpurchase DATE, " +
+                                "dateofpurchase TEXT, " +
                                 "price INTEGER, " +
                                 "lifeexpectancy INTEGER, " +
                                 "numberofpurchase INTEGER, " +
@@ -38,7 +37,7 @@ public class CreateTable{
                                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                                 "category TEXT NOT NULL, " +
                                 "description TEXT, " +
-                                "dateofpurchase DATE, " +
+                                "dateofpurchase TEXT, " +
                                 "price INTEGER, " +
                                 "numberofpurchase INTEGER, " +
                                 "placement TEXT" +
@@ -49,7 +48,7 @@ public class CreateTable{
                                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                                 "category TEXT NOT NULL, " +
                                 "description TEXT, " +
-                                "dateofpurchase DATE, " +
+                                "dateofpurchase TEXT, " +
                                 "price INTEGER, " +
                                 "numberofpurchase INTEGER, " +
                                 "placement TEXT" +
@@ -70,6 +69,9 @@ public class CreateTable{
                 try (PreparedStatement pstm = conn.prepareStatement(sql)) {
                     pstm.execute();
                 }
+            }
+            if(addMockdata){
+                addMockData();
             }
         } catch (SQLException exception) {
             throw new RuntimeException(exception.getMessage());
@@ -117,18 +119,24 @@ public class CreateTable{
     private void insertData(Connection conn, String tableName, String[] data) {
         String sql ="";
         if (tableName.equals("Mobel")){
-            sql = "INSERT INTO " + tableName + " (category, description, dateofpurchase, price, lifeexpectancy, placement) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO " + tableName + " (category, description, dateofpurchase, price, lifeexpectancy, numberofpurchase, placement) " +
+                    "VALUES (?, ?, ?, ?, ?, ?,?)";
         } else {
-            sql =  sql = "INSERT INTO " + tableName + " (category, description, dateofpurchase, price, placement) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+            sql =  sql = "INSERT INTO " + tableName + " (category, description, dateofpurchase, price, numberofpurchase,placement) " +
+                    "VALUES (?, ?, ?, ?, ?,?)";
         }
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, data[0]); //Category
-            pstmt.setString(1, data[0]); //description
-            pstmt.setString(1, data[0]); //dateofpurchase
-            pstmt.setString(1, data[0]); //price
-
+            pstmt.setString(1, data[0]);
+            pstmt.setString(2, data[1]);
+            pstmt.setString(3, data[2]);
+            pstmt.setInt(4, Integer.parseInt(data[3]));
+            pstmt.setInt(5, Integer.parseInt(data[data.length - 2])); // numberofpurchase is next to last
+            if (tableName.equals("Mobel")) {
+                pstmt.setInt(6, Integer.parseInt(data[4])); // lifeexpectancy
+                pstmt.setString(7, data[data.length - 1]); // placement is last
+            } else {
+                pstmt.setString(6, data[data.length - 1]); // placement is last
+            }
 
             pstmt.executeUpdate();
         }catch (SQLException e){

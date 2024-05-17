@@ -1,73 +1,110 @@
 package com.undal.inventarapp.shared.model;
 
+import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
+public abstract class Inventory {
+    private int id;
+    private String category;
+    private String description;
+    private Date dateOfPurchase;
+    private int price;
+    private int numberOfPurchase;
+    private String placement;
 
-public class Inventory {
-    private String uuid;
-    private String mobelId;
-    private String tekniskUtyrId;
-    private String utsmykningId;
-
-    public Inventory(String mobelId, String tekniskUtyrId, String utsmykningId) {
-        this.uuid = UUID.randomUUID().toString();
-        this.mobelId = mobelId;
-        this.tekniskUtyrId = tekniskUtyrId;
-        this.utsmykningId = utsmykningId;
+    public Inventory() {
     }
 
-    public String getUuid() {
-        return uuid;
+    public Inventory(String category, String description, Date dateOfPurchase, int price,int numberOfPurchase, String placement) {
+        this.category = category;
+        this.description = description;
+        this.dateOfPurchase = dateOfPurchase;
+        this.price = price;
+        this.numberOfPurchase = numberOfPurchase;
+        this.placement = placement;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public String getCategory() {
+        return category;
     }
 
-    public String getMobelId() {
-        return mobelId;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public void setMobelId(String mobelId) {
-        this.mobelId = mobelId;
+    public String getDescription() {
+        return description;
     }
 
-    public String getTekniskUtyrId() {
-        return tekniskUtyrId;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setTekniskUtyrId(String tekniskUtyrId) {
-        this.tekniskUtyrId = tekniskUtyrId;
+    public Date getDateOfPurchase() {
+        return dateOfPurchase;
     }
 
-    public String getUtsmykningId() {
-        return utsmykningId;
+    public void setDateOfPurchase(Date dateOfPurchase) {
+        this.dateOfPurchase = dateOfPurchase;
     }
 
-    public void setUtsmykningId(String utsmykningId) {
-        this.utsmykningId = utsmykningId;
+    public int getPrice() {
+        return price;
     }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+
+
+    public String getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(String placement) {
+        this.placement = placement;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inventory inventory = (Inventory) o;
-        return Objects.equals(uuid, inventory.uuid) && Objects.equals(mobelId, inventory.mobelId) && Objects.equals(tekniskUtyrId, inventory.tekniskUtyrId) && Objects.equals(utsmykningId, inventory.utsmykningId);
+        return id == inventory.id && price == inventory.price  && numberOfPurchase == inventory.numberOfPurchase && Objects.equals(category, inventory.category) && Objects.equals(description, inventory.description) && Objects.equals(dateOfPurchase, inventory.dateOfPurchase) && Objects.equals(placement, inventory.placement);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, mobelId, tekniskUtyrId, utsmykningId);
+        return Objects.hash(id, category, description, dateOfPurchase, price, numberOfPurchase, placement);
+    }
+
+    public int getNumberOfPurchase() {
+        return numberOfPurchase;
+    }
+
+    public void setNumberOfPurchase(int numberOfPurchase) {
+        this.numberOfPurchase = numberOfPurchase;
     }
 
     @Override
     public String toString() {
-        return "Inventar{" +
-                "uuid='" + uuid + '\'' +
-                ", mobelId='" + mobelId + '\'' +
-                ", tekniskUtyrId='" + tekniskUtyrId + '\'' +
-                ", utsmykningId='" + utsmykningId + '\'' +
+        return "Mobel{" +
+                "id=" + id +
+                ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
+                ", dateOfPurchase=" + dateOfPurchase +
+                ", price=" + price +
+                ", numberOfPurchase=" + numberOfPurchase +
+                ", placement='" + placement + '\'' +
                 '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
