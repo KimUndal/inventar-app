@@ -12,10 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class SqlQuery {
+    private static final String QUERY = "SELECT * FROM Inventory";
     private String jdbcUrl = Util.JDBC_URL;
 
     public List<Inventory> getInventoryByType(String inventoryType){
@@ -23,15 +23,13 @@ public class SqlQuery {
         String sqlQuery = "";
         String tableName = "";
         try(Connection conn = DriverManager.getConnection(jdbcUrl)){
-            sqlQuery = "SELECT i.id, u.*\n" +
-                    "FROM Inventory i\n" +
-                    "         JOIN "+ inventoryType+" u ON i."+inventoryType+" = u.id\n" +
-                    "WHERE i." + inventoryType + " IS NOT NULL;" ;
-            Statement pstm = conn.createStatement();
-            ResultSet rs = pstm.executeQuery(sqlQuery);
+            sqlQuery = "select * from Inventory where inventoryType = ?";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, inventoryType);
+            ResultSet rs = pstm.executeQuery();
 
             while(rs.next()) {
-               Inventory inventory = resultset.apply(rs, inventoryType);
+               Inventory inventory = resultset.apply(rs);
                inventoryList.add(inventory);
             }
         } catch (SQLException e) {
@@ -40,60 +38,120 @@ public class SqlQuery {
         return inventoryList;
     }
 
-//    private List<Inventory> getInventoryByDescription(String desc){
-//        List<Inventory> inventoryList = new ArrayList<>();
-//        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
-//          String sqlQuery = "SELECT i.id, u.*\n" +
-//                    "FROM Inventory i\n" +
-//                    "         JOIN "+ inventoryType+" u ON i."+inventoryType+" = u.id\n" +
-//                    "WHERE i." + inventoryType + " IS NOT NULL;" ;
-//            Statement pstm = conn.createStatement();
-//            ResultSet rs = pstm.executeQuery(sqlQuery);
-//
-//            while(rs.next()) {
-//                Inventory inventory = resultset.apply(rs, inventoryType);
-//                inventoryList.add(inventory);
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
-//    }
+    public List<Inventory> getInventoryByDescription(String desc){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+          String sqlQuery = QUERY + " where description like ?";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, "%" + desc + "%");
+            ResultSet rs = pstm.executeQuery();
 
-    private BiFunction<ResultSet, String, Inventory> resultset =(rs, inventoryType) ->{
+            while(rs.next()) {
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory> getInventoryByDateOfPurchase(String year){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = QUERY + " where Inventory.dateofpurchase like ?";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, "%" + year + "%");
+            ResultSet rs = pstm.executeQuery();
+
+            while(rs.next()) {
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory>getInventoryByCategory(String category){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = QUERY + " where Inventory.category like ?";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, "%" + category + "%");
+            ResultSet rs = pstm.executeQuery();
+
+            while(rs.next()) {
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory>getInventoryByPrice(int minPrice, int maxPrice){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = QUERY + " where Inventory.price between ? and ? order by Inventory.price desc";
+            getInventoryByMinMax(minPrice, maxPrice, inventoryList, conn, sqlQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory>getInventoryByLifeExpectancy(int minYear, int maxYear){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = QUERY + " where Inventory.lifeexpectancy between ? and ? order by Inventory.lifeexpectancy desc";
+            getInventoryByMinMax(minYear, maxYear, inventoryList, conn, sqlQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory>getInventoryItemsToBeDisposedOfBetweenTwoYears(int minYear, int maxYear){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = QUERY + " WHERE strftime('%Y', dateOfPurchase) + lifeExpectancy BETWEEN ? AND ?;";
+            getInventoryByMinMax(minYear, maxYear, inventoryList, conn, sqlQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    private void getInventoryByMinMax(int minYear, int maxYear, List<Inventory> inventoryList, Connection conn, String sqlQuery) throws SQLException {
+        PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+        pstm.setInt(1, minYear);
+        pstm.setInt(2, maxYear);
+        ResultSet rs = pstm.executeQuery();
+
+        while(rs.next()) {
+            Inventory inventory = resultset.apply(rs);
+            inventoryList.add(inventory);
+        }
+    }
+
+    private Function<ResultSet, Inventory> resultset =rs ->{
         try {
-            if (inventoryType.equals("Mobel")) {
+
+            if (rs.getString("inventoryType").equals("Mobel")) {
                 Mobel mobel = new Mobel();
-                mobel.setId(rs.getInt("id"));
-                mobel.setCategory(rs.getString("category"));
-                mobel.setDescription(rs.getString("description"));
-                // Directly get the SQL Date
-                mobel.setDateOfPurchase(getDateFromString(rs.getString("dateofpurchase")));
-
-                mobel.setPrice(rs.getInt("price"));
-                mobel.setLifeExpectancy(rs.getInt("lifeexpectancy"));
-                mobel.setNumberOfPurchase(rs.getInt("numberofpurchase"));
-                mobel.setPlacement(rs.getString("placement"));
+                extractedInventory(rs, mobel);
                 return mobel;
-            } else if (inventoryType.equals("Tekniskutstyr")) {
-                TekniskUtstyr tekniskUtstyr = new TekniskUtstyr();
+            } else if (rs.getString("inventoryType").equals("tekniskutstyr")) {
+                Inventory tekniskUtstyr = new TekniskUtstyr();
 
-                tekniskUtstyr.setId(rs.getInt("id"));
-                tekniskUtstyr.setCategory(rs.getString("category"));
-                tekniskUtstyr.setDescription(rs.getString("description"));
-                tekniskUtstyr.setDateOfPurchase(getDateFromString(rs.getString("dateofpurchase")));
-                tekniskUtstyr.setPrice(rs.getInt("price"));
-                tekniskUtstyr.setNumberOfPurchase(rs.getInt("numberofpurchase"));
-                tekniskUtstyr.setPlacement(rs.getString("placement"));
+                 extractedInventory(rs, tekniskUtstyr);
                 return tekniskUtstyr;
             } else {
-                Utsmykning utsmykning = new Utsmykning();
-                utsmykning.setId(rs.getInt("id"));
-                utsmykning.setCategory(rs.getString("category"));
-                utsmykning.setDescription(rs.getString("description"));
-                utsmykning.setDateOfPurchase(getDateFromString(rs.getString("dateofpurchase")));
-                utsmykning.setPrice(rs.getInt("price"));
-                utsmykning.setNumberOfPurchase(rs.getInt("numberofpurchase"));
-                utsmykning.setPlacement(rs.getString("placement"));
+                Inventory utsmykning = new Utsmykning();
+                extractedInventory(rs, utsmykning);
                 return utsmykning;
             }
 
@@ -103,9 +161,32 @@ public class SqlQuery {
 
     };
 
+    private void extractedInventory(ResultSet rs, Inventory inventory) throws SQLException {
+        setInventory(rs, inventory);
+        inventory.setNumberOfPurchase(rs.getInt("numberofpurchase"));
+        inventory.setPlacement(rs.getString("placement"));
+        if(inventory instanceof Mobel){
+            setInventory(rs, inventory);
+            ((Mobel) inventory).setLifeExpectancy(rs.getInt("lifeexpectancy"));
+            inventory.setNumberOfPurchase(rs.getInt("numberofpurchase"));
+            inventory.setPlacement(rs.getString("placement"));
+        }
+    }
+
+    private void setInventory(ResultSet rs, Inventory inventory) throws SQLException {
+        inventory.setId(rs.getInt("id"));
+        inventory.setInventoryType(rs.getString("inventoryType"));
+        inventory.setCategory(rs.getString("category"));
+        inventory.setDescription(rs.getString("description"));
+        inventory.setDateOfPurchase(getDateFromString(rs.getString("dateofpurchase")));
+        inventory.setPrice(rs.getInt("price"));
+    }
+
     private Date getDateFromString(String date){
         try {
-            return new SimpleDateFormat("YYYY-MM-DD").parse(date);
+          Date dateParsed = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+
+          return dateParsed;
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

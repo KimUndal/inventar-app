@@ -5,7 +5,7 @@ CREATE TRIGGER AutoGenerateUUID_Mobel
     AFTER INSERT ON Mobel
     FOR EACH ROW
 BEGIN
-    INSERT INTO inventory (id, mobel) VALUES (
+    INSERT INTO inventorylog (id, mobel) VALUES (
                                               (SELECT hex(randomblob(4)) || '-' || hex(randomblob(2))
                                                           || '-' || '4' || substr(hex(randomblob(2)), 2) || '-'
                                                           || substr('AB89', 1 + (abs(random()) % 4), 1)  ||
@@ -18,7 +18,7 @@ CREATE TRIGGER AutoGenerateUUID_TekniskUtstyr
     AFTER INSERT ON TekniskUtstyr
     FOR EACH ROW
 BEGIN
-    INSERT INTO inventory (id, tekniskutstyr) VALUES (
+    INSERT INTO inventorylog (id, tekniskutstyr) VALUES (
                                                       (SELECT hex(randomblob(4)) || '-' || hex(randomblob(2))
                                                                   || '-' || '4' || substr(hex(randomblob(2)), 2) || '-'
                                                                   || substr('AB89', 1 + (abs(random()) % 4), 1)  ||
@@ -31,7 +31,7 @@ CREATE TRIGGER AutoGenerateUUID_Utsmykning
     AFTER INSERT ON Utsmykning
     FOR EACH ROW
 BEGIN
-    INSERT INTO inventory (id, utsmykning) VALUES (
+    INSERT INTO inventorylog (id, utsmykning) VALUES (
                                                    (SELECT hex(randomblob(4)) || '-' || hex(randomblob(2))
                                                                || '-' || '4' || substr(hex(randomblob(2)), 2) || '-'
                                                                || substr('AB89', 1 + (abs(random()) % 4), 1)  ||

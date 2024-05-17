@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.undal.inventarapp.shared.util.Util.JDBC_URL;
+
 public class CreateTable{
 
 
@@ -17,59 +19,20 @@ public class CreateTable{
 
     public void createTables(boolean addMockdata){
         try(Connection conn = DriverManager.getConnection(JDBC_URL)) {
-            String sql = "";
-            for (String fileName : getTableName()) {
-                switch (fileName) {
-                    case "Mobel" -> {
-                        sql = "CREATE TABLE IF NOT EXISTS " + fileName + " (" +
-                                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                                "category TEXT NOT NULL, " +
-                                "description TEXT, " +
-                                "dateofpurchase TEXT, " +
-                                "price INTEGER, " +
-                                "lifeexpectancy INTEGER, " +
-                                "numberofpurchase INTEGER, " +
-                                "placement TEXT" +
-                                ");";
-                    }
-                    case "TekniskUtstyr" -> {
-                        sql = "CREATE TABLE IF NOT EXISTS " + fileName + " (" +
-                                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                                "category TEXT NOT NULL, " +
-                                "description TEXT, " +
-                                "dateofpurchase TEXT, " +
-                                "price INTEGER, " +
-                                "numberofpurchase INTEGER, " +
-                                "placement TEXT" +
-                                ");";
-                    }
-                    case "Utsmykning" -> {
-                        sql = "CREATE TABLE IF NOT EXISTS " + fileName + " (" +
-                                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                                "category TEXT NOT NULL, " +
-                                "description TEXT, " +
-                                "dateofpurchase TEXT, " +
-                                "price INTEGER, " +
-                                "numberofpurchase INTEGER, " +
-                                "placement TEXT" +
-                                ");";
-                    }
-                    default -> {
-                        sql = "CREATE TABLE IF NOT EXISTS " + fileName + " (" +
-                                "id TEXT PRIMARY KEY, " +
-                                "mobel INTEGER, " +
-                                "tekniskutstyr INTEGER, " +
-                                "utsmykning INTEGER, " +
-                                "FOREIGN KEY (mobel) REFERENCES Mobel(id), " +
-                                "FOREIGN KEY (tekniskutstyr) REFERENCES TekniskUtstyr(id), " +
-                                "FOREIGN KEY (utsmykning) REFERENCES Utsmykning(id)" +
-                                ");";
-                    }
-                }
+            String sql = "CREATE TABLE IF NOT EXISTS Inventory (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "inventoryType text not null, " +
+                        "category TEXT NOT NULL, " +
+                        "description TEXT, " +
+                        "dateofpurchase TEXT, " +
+                        "price INTEGER, " +
+                        "lifeexpectancy INTEGER, " +
+                        "numberofpurchase INTEGER, " +
+                        "placement TEXT" +
+                        ");";
                 try (PreparedStatement pstm = conn.prepareStatement(sql)) {
                     pstm.execute();
                 }
-            }
             if(addMockdata){
                 addMockData();
             }
@@ -96,18 +59,15 @@ public class CreateTable{
     public void addMockData(){
         try(Connection conn = DriverManager.getConnection(JDBC_URL);
             Scanner scanner = new Scanner(new File("src/main/resources/testfiles/mockdata.txt"))){
-            String tableName = "";
+            String inventoryType = "";
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
                 if(line.isEmpty()){
                     continue;
                 }
-                if(!line.contains(",")){
-                    tableName = line.trim();
-                    continue;
-                }
+
                 String[] data = line.split(",");
-                insertData(conn, tableName, data);
+                insertData(conn, data);
             }
             System.out.println("Mock data inserted succesfully...");
         } catch (SQLException | FileNotFoundException e) {
@@ -116,27 +76,28 @@ public class CreateTable{
         }
     }
 
-    private void insertData(Connection conn, String tableName, String[] data) {
+    private void insertData(Connection conn, String[] data) {
         String sql ="";
-        if (tableName.equals("Mobel")){
-            sql = "INSERT INTO " + tableName + " (category, description, dateofpurchase, price, lifeexpectancy, numberofpurchase, placement) " +
-                    "VALUES (?, ?, ?, ?, ?, ?,?)";
-        } else {
-            sql =  sql = "INSERT INTO " + tableName + " (category, description, dateofpurchase, price, numberofpurchase,placement) " +
-                    "VALUES (?, ?, ?, ?, ?,?)";
-        }
+
+        sql = "INSERT INTO Inventory (inventoryType, category, description, dateofpurchase, price, lifeexpectancy, numberofpurchase, placement) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, data[0]);
-            pstmt.setString(2, data[1]);
-            pstmt.setString(3, data[2]);
-            pstmt.setInt(4, Integer.parseInt(data[3]));
-            pstmt.setInt(5, Integer.parseInt(data[data.length - 2])); // numberofpurchase is next to last
-            if (tableName.equals("Mobel")) {
-                pstmt.setInt(6, Integer.parseInt(data[4])); // lifeexpectancy
-                pstmt.setString(7, data[data.length - 1]); // placement is last
-            } else {
-                pstmt.setString(6, data[data.length - 1]); // placement is last
+            pstmt.setString(1, data[0]); // Assuming the new column is the first column
+            pstmt.setString(2, data[1]); // Existing column
+            pstmt.setString(3, data[2]); // Existing column
+            pstmt.setString(4, data[3]); // String value for the fourth column
+            pstmt.setInt(5, Integer.parseInt(data[4])); // price is now in the 6th position
+            // placement is last
+            // numberofpurchase is next to last
+            if(data[0].equals("Mobel")) {
+                pstmt.setInt(6, Integer.parseInt(data[5]));
+            }else{
+                pstmt.setObject(6, null); // lifeexpectancy is now in the 5th position
+
             }
+            pstmt.setInt(7, Integer.parseInt(data[5]));
+            pstmt.setString(8, data[6]);
+
 
             pstmt.executeUpdate();
         }catch (SQLException e){

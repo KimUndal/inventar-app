@@ -6,7 +6,8 @@ import java.util.Objects;
 public class Utsmykning extends Inventory{
 
     public Utsmykning(){}
-    public Utsmykning(String category, String description, Date dateOfPurchase, int price, int numberOfPurchase, String placement) {
-        super(category, description, dateOfPurchase, price, numberOfPurchase, placement);
+    public Utsmykning(String inventoryType, String category, String description, Date dateOfPurchase, int price, int numberOfPurchase, String placement) {
+        super(inventoryType, category, description, dateOfPurchase, price, numberOfPurchase, placement);
     }
+
 }

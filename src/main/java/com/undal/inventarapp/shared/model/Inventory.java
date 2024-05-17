@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 public abstract class Inventory {
     private int id;
+    private String inventoryType;
     private String category;
     private String description;
     private Date dateOfPurchase;
@@ -14,7 +15,8 @@ public abstract class Inventory {
     public Inventory() {
     }
 
-    public Inventory(String category, String description, Date dateOfPurchase, int price,int numberOfPurchase, String placement) {
+    public Inventory(String inventoryType, String category, String description, Date dateOfPurchase, int price, int numberOfPurchase, String placement) {
+        this.inventoryType = inventoryType;
         this.category = category;
         this.description = description;
         this.dateOfPurchase = dateOfPurchase;
@@ -87,10 +89,19 @@ public abstract class Inventory {
         this.numberOfPurchase = numberOfPurchase;
     }
 
+    public String getInventoryType() {
+        return inventoryType;
+    }
+
+    public void setInventoryType(String inventoryType) {
+        this.inventoryType = inventoryType;
+    }
+
     @Override
     public String toString() {
-        return "Mobel{" +
+        return "Inventory{" +
                 "id=" + id +
+                ", inventoryType='" + inventoryType + '\'' +
                 ", category='" + category + '\'' +
                 ", description='" + description + '\'' +
                 ", dateOfPurchase=" + dateOfPurchase +
