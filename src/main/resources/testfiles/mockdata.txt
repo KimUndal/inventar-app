@@ -1,0 +1,35 @@
+Mobel
+Chair,Wooden office chair,2022-01-15,150,1,10,Office
+Table,Glass dining table,2023-03-22,500,1,15,Dining Room
+Sofa,Leather sofa,2021-11-30,700,1,8,Living Room
+Bed,King size bed with storage,2022-05-10,800,1,12,Bedroom
+Cabinet,Metal filing cabinet,2022-07-19,200,1,20,Office
+Shelf,Wooden bookshelf,2023-04-18,100,1,10,Library
+Desk,Standing desk,2021-10-12,400,1,15,Office
+Stool,Bar stool,2023-02-14,75,1,7,Kitchen
+Couch,Recliner couch,2022-08-20,900,1,10,Living Room
+Table,Nightstand,2023-05-25,100,1,10,Bedroom
+
+Tekniskutstyr
+Laptop,Dell XPS 13,2023-01-15,1000,3,Office
+Printer,HP LaserJet Pro,2022-04-22,300,2,Office
+Monitor,27-inch 4K monitor,2023-05-30,400,1,Office
+Projector,Epson Home Cinema,2021-12-10,600,1,Conference Room
+Smartphone,iPhone 13,2022-07-19,1200,3,Office
+Camera,Canon EOS R5,2023-02-18,3500,1,Photography Studio
+Router,Netgear Nighthawk,2022-11-12,200,1,Server Room
+Smart TV,Samsung 55-inch QLED,2023-03-14,1500,1,Living Room
+Headphones,Sony WH-1000XM4,2022-09-20,300,5,Office
+Speaker,BOSE SoundLink,2023-06-25,250,2,Conference Room
+
+Utsmykning
+Painting,Abstract oil painting,2022-02-15,500,2,Living Room
+Sculpture,Modern art sculpture,2023-01-22,800,1,Office
+Plant,Ficus tree,2021-12-30,100,5,Office
+Photograph,Black and white landscape,2022-05-10,300,1,Bedroom
+Rug,Persian rug,2022-06-19,1000,1,Dining Room
+Clock,Antique wall clock,2023-04-18,200,1,Living Room
+Vase,Ceramic vase,2022-09-12,150,1,Dining Room
+Lamp,Designer floor lamp,2023-02-14,450,10,Office
+Mirror,Full-length mirror,2022-07-20,250,2,Bedroom
+Chandelier,Crystal chandelier,2023-05-25,1200,1,Dining Room
