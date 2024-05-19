@@ -4,18 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="defb478b-0ded-418d-b2f5-c38d7f508a37" name="Changes" comment="commit 2: added search and refactor">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/InventoryLog.java" afterDir="false" />
+    <list default="true" id="defb478b-0ded-418d-b2f5-c38d7f508a37" name="Changes" comment="commit 4: added the rest of the queries and more refactoring">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/client/ClientHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/server/ServerHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/util/RetryCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/util/RetryCommandImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/util/SQLiteSingletonHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/database/CreateTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/database/CreateTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/database/SqlQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/database/SqlQuery.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/server/InventarServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/server/InventarServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/Inventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/Inventory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/Mobel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/Mobel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/TekniskUtstyr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/TekniskUtstyr.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/Utsmykning.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/model/Utsmykning.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/sql/sql.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/sql/sql.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/testfiles/mockdata.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/testfiles/mockdata.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/util/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/undal/inventarapp/shared/util/Util.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +25,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="FxmlFile" />
+        <option value="Enum" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -33,22 +34,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "KimUndal"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;KimUndal&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/KimUndal/inventar-app.git",
-    "accountId": "8b0b5446-e906-40ce-a9ff-e08bc5537290"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/KimUndal/inventar-app.git&quot;,
+    &quot;accountId&quot;: &quot;8b0b5446-e906-40ce-a9ff-e08bc5537290&quot;
   }
-}]]></component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -65,34 +66,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.HelloApplication.executor": "Run",
-    "Application.InventarServer.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "extract.method.default.visibility": "private",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ClientHandler.executor&quot;: &quot;Run&quot;,
+    &quot;Application.HelloApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.InventarServer.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ],
-    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
-      "SQLite"
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;SQLite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="L:\Programfiler (x86)\programmering\JavaFx projects\eksamen\inventar-app\src\main\java\com\undal\inventarapp\client" />
@@ -105,6 +108,19 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.InventarServer">
+    <configuration name="ClientHandler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.undal.inventarapp.client.ClientHandler" />
+      <module name="inventar-app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.undal.inventarapp.client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="HelloApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.undal.inventarapp.client.HelloApplication" />
       <module name="inventar-app" />
@@ -134,6 +150,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.InventarServer" />
+        <item itemvalue="Application.ClientHandler" />
         <item itemvalue="Application.HelloApplication" />
       </list>
     </recent_temporary>
@@ -156,7 +173,10 @@
       <updated>1715887640129</updated>
       <workItem from="1715887641251" duration="1011000" />
       <workItem from="1715888664879" duration="3683000" />
-      <workItem from="1715931240763" duration="28991000" />
+      <workItem from="1715931240763" duration="29997000" />
+      <workItem from="1716019721850" duration="9848000" />
+      <workItem from="1716101451376" duration="9442000" />
+      <workItem from="1716150790405" duration="4840000" />
     </task>
     <task id="LOCAL-00001" summary="commit 1: added sqls and database code">
       <option name="closed" value="true" />
@@ -174,7 +194,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715953943495</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="commit 3: added more queries and refactor code">
+      <option name="closed" value="true" />
+      <created>1715980279313</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1715980279313</updated>
+    </task>
+    <task id="LOCAL-00004" summary="commit 4: added the rest of the queries and more refactoring">
+      <option name="closed" value="true" />
+      <created>1716105802661</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1716105802661</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,6 +219,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit 1: added sqls and database code" />
     <MESSAGE value="commit 2: added search and refactor" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit 2: added search and refactor" />
+    <MESSAGE value="commit 3: added more queries and refactor code" />
+    <MESSAGE value="commit 4: added the rest of the queries and more refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit 4: added the rest of the queries and more refactoring" />
   </component>
 </project>

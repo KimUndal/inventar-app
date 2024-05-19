@@ -1,5 +1,6 @@
 package com.undal.inventarapp.database;
 
+import com.undal.inventarapp.shared.util.SQLiteSingletonHandler;
 import com.undal.inventarapp.shared.util.Util;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public class CreateTable{
 
     public void createTables(boolean addMockdata){
         boolean isTriggerCreated = false;
-        try(Connection conn = DriverManager.getConnection(JDBC_URL)) {
+        try(Connection conn = SQLiteSingletonHandler.getInstance().getConnection()) {
             String inventoryTableSql = "CREATE TABLE IF NOT EXISTS Inventory (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "inventoryType TEXT NOT NULL, " +
