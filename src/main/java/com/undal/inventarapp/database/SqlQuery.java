@@ -1,16 +1,11 @@
 package com.undal.inventarapp.database;
 
-import com.undal.inventarapp.shared.model.Inventory;
-import com.undal.inventarapp.shared.model.Mobel;
-import com.undal.inventarapp.shared.model.TekniskUtstyr;
-import com.undal.inventarapp.shared.model.Utsmykning;
+import com.undal.inventarapp.shared.model.*;
 import com.undal.inventarapp.shared.util.Util;
 
 import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
@@ -125,6 +120,98 @@ public class SqlQuery {
         return inventoryList;
     }
 
+    public List<Inventory> getInventoryItemsByPlacement(String placement){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)) {
+            String sqlQuery = QUERY + " where Inventory.placement like ?";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, "%" + placement + "%");
+            ResultSet rs = pstm.executeQuery();
+            while(rs.next()){
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory>getInventoryByNumberOfPurchase(int min, int max){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = QUERY + " WHERE Inventory.numberofpurchase between ? and ?;";
+            getInventoryByMinMax(min, max, inventoryList, conn, sqlQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory> getInventoryByStatusCode(int statusCode){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = "SELECT i.*\n" +
+                    "FROM Inventory i\n" +
+                    "JOIN InventoryStatus s ON i.id = s.inventoryId\n" +
+                    "WHERE s.statuscode = ? ;";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setInt(1, statusCode);
+            ResultSet rs = pstm.executeQuery();
+            while(rs.next()) {
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory> getInventoryByStatusDescription(String description){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = "SELECT i.*\n" +
+                    "FROM Inventory i\n" +
+                    "JOIN InventoryStatus s ON i.id = s.inventoryId\n" +
+                    "WHERE s.statusDescription = ? ;";
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, description);
+            ResultSet rs = pstm.executeQuery();
+            while(rs.next()) {
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+    public List<Inventory> getInventoryByOutOfUseAndYear(String year){
+        List<Inventory> inventoryList = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(jdbcUrl)){
+            String sqlQuery = "SELECT i.*\n" +
+                    "FROM Inventory i\n" +
+                    "JOIN InventoryStatus s ON i.id = s.inventoryId\n" +
+                    "WHERE 1=1 " +
+                    "AND status='Out of Use'" +
+                    "AND s.dateChanged like ? ;";
+
+            PreparedStatement pstm = conn.prepareStatement(sqlQuery);
+            pstm.setString(1, "%"+year+"%");
+            ResultSet rs = pstm.executeQuery();
+            while(rs.next()) {
+                Inventory inventory = resultset.apply(rs);
+                inventoryList.add(inventory);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return inventoryList;
+    }
+
+
     private void getInventoryByMinMax(int minYear, int maxYear, List<Inventory> inventoryList, Connection conn, String sqlQuery) throws SQLException {
         PreparedStatement pstm = conn.prepareStatement(sqlQuery);
         pstm.setInt(1, minYear);
@@ -178,17 +265,11 @@ public class SqlQuery {
         inventory.setInventoryType(rs.getString("inventoryType"));
         inventory.setCategory(rs.getString("category"));
         inventory.setDescription(rs.getString("description"));
-        inventory.setDateOfPurchase(getDateFromString(rs.getString("dateofpurchase")));
+        inventory.setDateOfPurchase(parseLocalDate(rs.getString("dateofpurchase")));
         inventory.setPrice(rs.getInt("price"));
     }
 
-    private Date getDateFromString(String date){
-        try {
-          Date dateParsed = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-
-          return dateParsed;
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    private LocalDate parseLocalDate(String date){
+        return LocalDate.parse(date);
     }
 }

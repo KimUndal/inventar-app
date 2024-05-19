@@ -1,13 +1,13 @@
 package com.undal.inventarapp.shared.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 public abstract class Inventory {
     private int id;
     private String inventoryType;
     private String category;
     private String description;
-    private Date dateOfPurchase;
+    private LocalDate dateOfPurchase;
     private int price;
     private int numberOfPurchase;
     private String placement;
@@ -15,7 +15,7 @@ public abstract class Inventory {
     public Inventory() {
     }
 
-    public Inventory(String inventoryType, String category, String description, Date dateOfPurchase, int price, int numberOfPurchase, String placement) {
+    public Inventory(String inventoryType, String category, String description, LocalDate dateOfPurchase, int price, int numberOfPurchase, String placement) {
         this.inventoryType = inventoryType;
         this.category = category;
         this.description = description;
@@ -41,11 +41,11 @@ public abstract class Inventory {
         this.description = description;
     }
 
-    public Date getDateOfPurchase() {
+    public LocalDate getDateOfPurchase() {
         return dateOfPurchase;
     }
 
-    public void setDateOfPurchase(Date dateOfPurchase) {
+    public void setDateOfPurchase(LocalDate dateOfPurchase) {
         this.dateOfPurchase = dateOfPurchase;
     }
 

@@ -18,22 +18,50 @@ public class CreateTable{
     public static final String JDBC_URL = Util.JDBC_URL;
 
     public void createTables(boolean addMockdata){
+        boolean isTriggerCreated = false;
         try(Connection conn = DriverManager.getConnection(JDBC_URL)) {
-            String sql = "CREATE TABLE IF NOT EXISTS Inventory (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "inventoryType text not null, " +
-                        "category TEXT NOT NULL, " +
-                        "description TEXT, " +
-                        "dateofpurchase TEXT, " +
-                        "price INTEGER, " +
-                        "lifeexpectancy INTEGER, " +
-                        "numberofpurchase INTEGER, " +
-                        "placement TEXT" +
-                        ");";
-                try (PreparedStatement pstm = conn.prepareStatement(sql)) {
-                    pstm.execute();
-                }
-            if(addMockdata){
+            String inventoryTableSql = "CREATE TABLE IF NOT EXISTS Inventory (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "inventoryType TEXT NOT NULL, " +
+                    "category TEXT NOT NULL, " +
+                    "description TEXT, " +
+                    "dateofpurchase TEXT, " +
+                    "price INTEGER, " +
+                    "lifeexpectancy INTEGER, " +
+                    "numberofpurchase INTEGER, " +
+                    "placement TEXT" +
+                    ");";
+
+            String inventoryStatusTableSql = "CREATE TABLE IF NOT EXISTS InventoryStatus (" +
+                    "statusId INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "inventoryId INTEGER NOT NULL, " +
+                    "statuscode TEXT NOT NULL, " +
+                    "status TEXT NOT NULL, " +
+                    "statusDescription TEXT, " +
+                    "dateChanged TEXT NOT NULL, " +
+                    "FOREIGN KEY (inventoryId) REFERENCES Inventory(id), " +
+                    "UNIQUE (statusId, inventoryId)" +
+                    ");";
+
+            try (PreparedStatement inventoryTableStmt = conn.prepareStatement(inventoryTableSql);
+                 PreparedStatement inventoryStatusTableStmt = conn.prepareStatement(inventoryStatusTableSql);
+                ) {
+                 inventoryTableStmt.execute();
+                 inventoryStatusTableStmt.execute();
+
+
+            }
+            String setStatusTriggerSql = "CREATE TRIGGER IF NOT EXISTS SetStatusAfterInsert " +
+                    "AFTER INSERT ON Inventory " +
+                    "FOR EACH ROW " +
+                    "BEGIN " +
+                    "    INSERT INTO InventoryStatus (inventoryId, statuscode, status, statusdescription, dateChanged) " +
+                    "    VALUES (NEW.id, '200', 'In Use', null, DATE('now')); " +
+                    "END;";
+            try(PreparedStatement   setStatusTriggerStmt = conn.prepareStatement(setStatusTriggerSql)){
+             setStatusTriggerStmt.execute();
+            }
+            if(addMockdata ){
                 addMockData();
             }
         } catch (SQLException exception) {
@@ -91,12 +119,15 @@ public class CreateTable{
             // numberofpurchase is next to last
             if(data[0].equals("Mobel")) {
                 pstmt.setInt(6, Integer.parseInt(data[5]));
+                pstmt.setInt(7, Integer.parseInt(data[6]));
+                pstmt.setString(8, data[7]);
             }else{
                 pstmt.setObject(6, null); // lifeexpectancy is now in the 5th position
-
+                pstmt.setInt(7, Integer.parseInt(data[5]));
+                pstmt.setString(8, data[6]);
             }
-            pstmt.setInt(7, Integer.parseInt(data[5]));
-            pstmt.setString(8, data[6]);
+
+
 
 
             pstmt.executeUpdate();
